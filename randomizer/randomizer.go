@@ -1,6 +1,7 @@
 package randomizer
 
 import (
+	"io"
 	"math/rand"
 	"os"
 )
@@ -34,11 +35,9 @@ func NewRandomizer() (*Randomizer, error) {
 	}
 	defer file.Close()
 
-	for i := 0; i < poolsize; i += Blocksize {
-		file.Read(r.buffer[i : i+Blocksize])
-	}
+	_, err = io.ReadFull(file, r.buffer)
 
-	return r, nil
+	return r, err
 }
 
 // GetRandom returns a new RandomID with blocksize bytes

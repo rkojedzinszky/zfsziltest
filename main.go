@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"os"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/rkojedzinszky/zfsziltest/randomizer"
@@ -20,18 +21,16 @@ type blockStore struct {
 }
 
 func (p *blockStore) Set(block int64, id randomizer.RandomID) {
+	atomic.AddInt64(&p.written, 1)
+
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
 	p.blocks[block] = id
-	p.written++
 }
 
 func (p *blockStore) Written() int64 {
-	p.lock.Lock()
-	defer p.lock.Unlock()
-
-	return p.written
+	return atomic.LoadInt64(&p.written)
 }
 
 func (p *blockStore) Length() int {
