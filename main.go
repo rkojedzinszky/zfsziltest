@@ -110,7 +110,7 @@ func (j *job) worker(wg *sync.WaitGroup) {
 
 		block := rand.Int63n(j.blocks)
 
-		file.Seek(block<<randomizer.Blockshift, 0)
+		_, _ = file.Seek(block<<randomizer.Blockshift, 0)
 
 		n, err := file.Write(data)
 		if err != nil {
@@ -140,7 +140,7 @@ func (j *job) check() {
 	j.ps.Iterate(func(block int64, rid randomizer.RandomID) {
 		fmt.Printf("Checking %6d / %6d block=%10d    ", counter, j.ps.Length(), block)
 
-		file.Seek(block<<randomizer.Blockshift, 0)
+		_, _ = file.Seek(block<<randomizer.Blockshift, 0)
 		n, err := file.Read(buf)
 		if err != nil {
 			log.Panic(err)
@@ -189,7 +189,7 @@ func main() {
 		for {
 			select {
 			case <-stop:
-				fmt.Println("\n")
+				fmt.Print("\n\n")
 				return
 			case <-c.C:
 			}
